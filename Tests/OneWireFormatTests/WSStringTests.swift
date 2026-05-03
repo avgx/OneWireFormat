@@ -4,7 +4,7 @@ import Foundation
 
 /// Примеры для этого теста получены через
 /// bash-3.2$ websocat 'ws://try.axxonsoft.com/events'
-struct NextStringProtocolDecodeTests {
+struct WSStringTests {
     @Test(arguments: [
         (
             """
@@ -115,7 +115,7 @@ struct NextStringProtocolDecodeTests {
         expectedCount: Int
     ) throws {
         /// new decode!
-        let objects = try NextStringProtocol.decodeEventsPack(from: string.data(using: .utf8)!)
+        let objects = try WSString.decodeEventsPack(from: string.data(using: .utf8)!)
         print("\(objects)")
         let uniqueTypes2 = Set(objects.map({ $0.type }))
         #expect(objects.count == expectedCount)

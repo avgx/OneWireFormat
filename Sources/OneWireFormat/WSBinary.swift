@@ -1,6 +1,6 @@
 import Foundation
 
-public enum NextBinaryProtocol {
+public enum WSBinary {
     /// Распарсенный бинарный кадр медиапотока.
     public struct Packet: Sendable {
         /// Тип полезной нагрузки в пакете.
@@ -27,7 +27,7 @@ public enum NextBinaryProtocol {
         }
     }
 }
-extension NextBinaryProtocol {
+extension WSBinary {
     /// Packet format
     /// 201X-XX-XX `idLen(2)|idBytes(var)|tsBytes(8)|dataBytes(var)`
     /// 2018-03-08  `idLen(2)|idBytes(var)|tsBytes(8)|prerollByte(1)|dataBytes(var)`

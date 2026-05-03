@@ -1,6 +1,6 @@
 import Foundation
 
-public enum NextStringProtocol {
+public enum WSString {
     
     enum EventsPackKey: String {
         case objects
@@ -64,13 +64,13 @@ public enum NextStringProtocol {
     }
 }
 
-extension NextStringProtocol.Event: CustomStringConvertible {
+extension WSString.Event: CustomStringConvertible {
     public var description: String {
         rawPayload.debugDescription
     }
 }
 
-extension NextStringProtocol.Event: CustomDebugStringConvertible {
+extension WSString.Event: CustomDebugStringConvertible {
     public var debugDescription: String {
         "\(type)|\(event_type ?? "-")|ts:\(timestamp ?? "-")|id:\(id ?? "-")|\(source ?? "-")"
     }

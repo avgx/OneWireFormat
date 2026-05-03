@@ -2,11 +2,7 @@ import Foundation
 import Testing
 @testable import OneWireFormat
 
-
-
-// MARK: - Tests
-
-struct NextBinaryProtocolParseTests {
+struct WSBinaryTests {
     
     @Test(arguments: [
         (
@@ -64,7 +60,7 @@ struct NextBinaryProtocolParseTests {
             return
         }
         
-        let frame = try NextBinaryProtocol.parse(data: data)
+        let frame = try WSBinary.parse(data: data)
         
         // --- ID ---
         #expect(frame.streamId.uuidString == expectedId)
