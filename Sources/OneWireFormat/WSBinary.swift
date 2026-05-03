@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 public enum WSBinary {
     /// Распарсенный бинарный кадр медиапотока.
@@ -63,10 +64,11 @@ extension WSBinary {
         /// в новом - тип пакет. а дальше 2 байта длина id
         let idLen = !oldStyle ? Int(try reader.readUInt16BE()) : Int(try reader.readUInt8())
         if idLen != 0x24 {
-            print("warning: idLen != 0x24")
+            os_log("warning: idLen != 0x24")
         }
         let idData = try reader.readBytes(count: idLen)
         
+        //TODO: на самом деле не факт что тут может быть только UUID. надо проверить на реальном бэкэнде.
         guard
             let idString = String(data: idData, encoding: .utf8),
             let streamId = UUID(uuidString: idString)
@@ -86,7 +88,8 @@ extension WSBinary {
         //timestamp = ms от epoch 1900
         if !(tsBytes[0] == 0x00 && tsBytes[1] == 0x00) {
             // можно добавить лог при необходимости
-            print("warning: tsBytes out of real")
+            os_log("warning: tsBytes out of real \(tsBytes)")
+            throw URLError(.cannotDecodeContentData)
         }
         
         /// а вот тут реальное вычитывание даты
@@ -106,54 +109,6 @@ extension WSBinary {
         /// PAYLOAD
         let payload = Data(reader.remainingData())
         
-        return Packet(
-            streamId: streamId,
-            ts: ts,
-            type: type,
-            payload: payload
-        )
-    }
-    
-    /// Разбирает бинарный пакет медиапотока (включая устаревший префикс `0x00 0x24` для длины id).
-    /// - Returns: `MediaStream.Frame` с идентификатором потока, временем и полезной нагрузкой.
-    public static func parse1(data: Data) throws -> Packet {
-        guard data.count > 3 else {
-            throw URLError(.cannotDecodeContentData)
-        }
-
-        var reader = ByteReader(data)
-
-        let oldStyle: Bool = (data[0] == 0 && data[1] == 0x24)
-
-        let rawType = try reader.readUInt8()
-        guard let type = Packet.PacketType(rawValue: rawType) else {
-            throw URLError(.cannotDecodeContentData)
-        }
-
-        let idLen = !oldStyle ? Int(try reader.readUInt16BE()) : Int(try reader.readUInt8())
-        let idData = try reader.readBytes(count: idLen)
-
-        guard
-            let idString = String(data: idData, encoding: .utf8),
-            let streamId = UUID(uuidString: idString)
-        else {
-            throw URLError(.cannotDecodeContentData)
-        }
-
-        let tsOffset = reader.offset
-        let tsBytes = Data(data[tsOffset..<(tsOffset + 8)])
-        if !(tsBytes[0] == 0x00 && tsBytes[1] == 0x00) {
-            // допустимые варианты см. историю формата
-        }
-
-        let rawTs = try reader.readUInt64BE()
-
-        let epochOffset: UInt64 = 2_208_988_800_000
-        let unixMillis = Int64(rawTs) - Int64(epochOffset)
-        let ts = Date(timeIntervalSince1970: TimeInterval(unixMillis) / 1000.0)
-
-        let payload = Data(reader.remainingData())
-
         return Packet(
             streamId: streamId,
             ts: ts,
