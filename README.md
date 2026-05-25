@@ -25,6 +25,21 @@ let local = Timestamp.local // TimeZone.current
 
 `Timestamp.Formatter` parses 3 (ms), 6 (µs), or 9 (ns) fractional digits.
 
+## Wire identifiers
+
+### AccessPoint
+
+Native BL component path (`access_point`).
+
+### GroupID
+
+VMS camera group id (`group_id` in GroupManager.proto).
+
+```swift
+let groupId: GroupID = ...
+let root = GroupID.defaultGroupID
+```
+
 ## WebSocket binary payloads
 
 `WSBinary` decodes binary media frames from the WebSocket stream.
