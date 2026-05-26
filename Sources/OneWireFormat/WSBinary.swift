@@ -39,7 +39,7 @@ extension WSBinary {
     /// 000024
     /// 0024
     /// длинна id пока укладывается в 1 байт. и в вебе там баг на парсинге.
-    static func parse(data: Data) throws -> Packet {
+    public static func parse(data: Data) throws -> Packet {
         guard data.count > 3 else {
             throw URLError(.cannotDecodeContentData)
         }
